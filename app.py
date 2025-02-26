@@ -67,7 +67,6 @@ def get_gemini_response(prompt):
     """Use Gemini AI to get responses"""
     if not GEMINI_API_KEY:
         st.sidebar.warning("⚠️ Gemini API key not set. Using fallback mode.")
-        return handle_conversion_fallback(prompt)
     
     try:
         # Initialize Gemini model
@@ -78,7 +77,6 @@ def get_gemini_response(prompt):
         return response.text
     except Exception as e:
         st.error(f"Error with Gemini API: {e}")
-        return handle_conversion_fallback(prompt)
 
 def get_currency_rates():
     """Get real-time currency rates using a free API"""
@@ -101,37 +99,13 @@ def get_currency_rates():
             "PKR": 278.50, "timestamp": "Using cached rates (may not be current)"
         }
 
-def handle_conversion_fallback(prompt):
-    """Fallback function for when API fails or is not available"""
-    words = prompt.lower().split()
-    result = ""
-    
-    if "meter" in prompt and "centimeter" in prompt:
-        for i, word in enumerate(words):
-            if word.replace('.', '', 1).isdigit():
-                value = float(word)
-                if "meter" in prompt and "centimeter" in prompt:
-                    result = f"{value} meters = {value * 100} centimeters"
-                break
-    elif "dollar" in prompt or "usd" in prompt:
-        for i, word in enumerate(words):
-            if word.replace('.', '', 1).isdigit():
-                value = float(word)
-                if "euro" in prompt or "eur" in prompt:
-                    result = f"{value} USD ≈ {value * 0.93} EUR"
-                elif "pkr" in prompt or "rupee" in prompt:
-                    result = f"{value} USD ≈ {value * 278.50} PKR"
-                break
-    
-    if not result:
-        result = "I couldn't process this conversion. Please try using the selection interface."
-        
-    return result
 
 # Function to create prompt for the AI model
 def create_ai_prompt(text):
     return f"""Convert {text}. Respond only with the converted value and units, nothing else. 
-    Format: [value] [unit]. Example: '5 meters' or '10.5 USD'"""
+    Format: [value] [unit]. Example: '5 meters' or '10.5 USD' and you know you are a Smart Unit Converter when Someone say hi so you can say hi back. and descrie your self like you are a smart unit converter and you can convert units. and when someone ask about converting so only say him converted currency don't describe your self every time. Mainly Focus on converting values dont talk. Convert {text}. Respond only with the converted value and units, nothing else. 
+    Format: [value] [unit]. Example: '5 meters' or '10.5 USD' and dont say hi everytime only when while user say hi otherwise give converted values and if you want to give msg so you can.  
+    """
 
 # Sidebar for converter selection
 st.sidebar.markdown("<div class='sub-header'>Choose Converter</div>", unsafe_allow_html=True)
